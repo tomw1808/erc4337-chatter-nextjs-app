@@ -7,7 +7,7 @@ import {
     CandideAccount, Operation,
     GasEstimationResult,
     UserOperation,
-    UserOperationEmptyValues, Bundler, getUserOperationHash, CandideValidationPaymaster
+    UserOperationEmptyValues, Bundler, getUserOperationHash, CandideValidationPaymaster, JsonRpcError
 } from "abstractionkit";
 
 import entrypointabi from "../../lib/entrypoint";
@@ -131,13 +131,12 @@ export default function CandideSafeWallet() {
 
 
                 SetPendingIcon("🧮")
-                let estimation = await bundler.estimateUserOperationGas(user_operation) as GasEstimationResult;
+                let estimation = await bundler.estimateUserOperationGas(user_operation) as GasEstimationResult | JsonRpcError;
                 console.log(estimation);
 
                 // catch errors if there's any in the estimateUserOperationGas call
                 if ("code" in estimation) {
-                    throw new Error(estimation.message)
-                    return
+                    throw new Error(estimation.message);
                 }
 
                 user_operation.callGasLimit = toHex(
