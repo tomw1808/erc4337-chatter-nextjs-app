@@ -13,7 +13,7 @@ const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
 
 export default function MessageHistory({ address, pendingMessage, pendingIcon, SetPendingMessage }: { address: `0x${string}` | undefined, pendingMessage?: Message, pendingIcon?: string, SetPendingMessage?: Dispatch<SetStateAction<Message | undefined>> }) {
 
-    const [messages, setMessages] = useState<Log[]>();
+    const [messages, setMessages] = useState<Message[]>();
     const publicClient = usePublicClient();
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function MessageHistory({ address, pendingMessage, pendingIcon, S
                 eventName: "Message",
                 fromBlock: blocknumber - BigInt(5000),
                 toBlock: 'latest'
-            }).then(setMessages);
+            }).then((logs) => {setMessages(logs as Message[])});
         });
 
 
@@ -50,7 +50,7 @@ export default function MessageHistory({ address, pendingMessage, pendingIcon, S
             } else {
                 console.log({logs, pendingMessage})
             }
-            setMessages(oldMessages => { return oldMessages ? [...oldMessages, ...logs] : logs });
+            setMessages(oldMessages => { return oldMessages ? [...oldMessages, ...logs as Message[]] : logs as Message[] });
 
             
         }

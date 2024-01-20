@@ -1,4 +1,4 @@
-import { Bundler } from "abstractionkit";
+import { Bundler, UserOperationReceiptResult } from "abstractionkit";
 import { Hash } from "viem";
 
 export default async function waitForUserOperationTransaction (hash: Hash, bunder: Bundler): Promise<Hash> {
@@ -14,10 +14,10 @@ export default async function waitForUserOperationTransaction (hash: Hash, bunde
         hash as `0x${string}`
       ).catch((e) => {
         //do nothing here, just wait
-      });
+      }) as UserOperationReceiptResult;
       console.log("retrying to get the receipt")
       if (receipt.receipt && receipt.receipt.transactionHash) {
-        return receipt.receipt.transactionHash;
+        return receipt.receipt.transactionHash as `0x${string}`;
       }
     }
 
