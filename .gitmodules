@@ -1,0 +1,3 @@
+[submodule "lib/abstractionkit"]
+	path = lib/abstractionkit
+	url = https://github.com/candidelabs/abstractionkit.git

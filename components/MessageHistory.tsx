@@ -1,0 +1,63 @@
+"use client";
+
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Log } from "viem";
+import { useContractEvent, usePublicClient } from "wagmi";
+import ChatMessage from "./ChatMessage";
+import ScrollableBox from "./ScrollableBox";
+import { Message } from "@/lib/types/Message";
+
+const chatterjson = require("../../chatter-contracts/out/Chatter.sol/Chatter.json");
+const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
+
+export default function MessageHistory({ address, pendingMessage, pendingIcon, SetPendingMessage }: { address: `0x${string}` | undefined, pendingMessage?: Message, pendingIcon?: string, SetPendingMessage?: Dispatch<SetStateAction<Message | undefined>> }) {
+
+    const [messages, setMessages] = useState<Log[]>();
+    const publicClient = usePublicClient();
+
+    useEffect(() => {
+        setMessages([]);
+        publicClient.getBlockNumber().then(blocknumber => {
+            publicClient.getContractEvents({
+                address: chatterAddress,
+                abi: chatterjson.abi,
+                eventName: "Message",
+                fromBlock: blocknumber - BigInt(5000),
+                toBlock: 'latest'
+            }).then(setMessages);
+        });
+
+
+    }, []);
+
+    useContractEvent({
+        address: chatterAddress,
+        abi: chatterjson.abi,
+        eventName: "Message",
+        listener(logs) {
+            console.log({logs, pendingMessage, SetPendingMessage})
+            if (pendingMessage !== undefined && SetPendingMessage !== undefined) {
+                for (let i = 0; i < logs.length; i++) {
+                    if (
+                        logs[i].args.message == pendingMessage.message &&
+                        logs[i].args.sender == pendingMessage.sender) {
+                        SetPendingMessage(undefined);
+                    } else {
+                        console.log({logs, pendingMessage})
+                    }
+                }
+            } else {
+                console.log({logs, pendingMessage})
+            }
+            setMessages(oldMessages => { return oldMessages ? [...oldMessages, ...logs] : logs });
+
+            
+        }
+    })
+
+    return <ScrollableBox className='flex flex-col py-5 px-2 w-full h-full overflow-y-auto scrollbar-thumb-blue scrollbar-track-blue scrollbar-w-2 scrollbar-track-blue-lighter scrolling-touch'>
+        {messages?.map((logmsg, i) => <ChatMessage address={logmsg.args.sender} message={logmsg.args.message} key={i} connectedAddress={address} />)}
+        {pendingMessage && <div className="flex flex-row items-center w-full justify-end"><span className="p-3">{pendingIcon}</span> <ChatMessage address={pendingMessage.args.sender} message={pendingMessage.args.message} connectedAddress={address} /></div>}
+    </ScrollableBox>
+
+}
