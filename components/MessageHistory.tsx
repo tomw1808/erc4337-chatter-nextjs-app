@@ -40,8 +40,8 @@ export default function MessageHistory({ address, pendingMessage, pendingIcon, S
             if (pendingMessage !== undefined && SetPendingMessage !== undefined) {
                 for (let i = 0; i < logs.length; i++) {
                     if (
-                        logs[i].args.message == pendingMessage.message &&
-                        logs[i].args.sender == pendingMessage.sender) {
+                        logs[i].args.message == pendingMessage.args.message &&
+                        logs[i].args.sender == pendingMessage.args.sender) {
                         SetPendingMessage(undefined);
                     } else {
                         console.log({logs, pendingMessage})
