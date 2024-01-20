@@ -21,7 +21,8 @@ const chain = sepolia;
 
 const ALCHEMY_API_KEY = "4-Rnsg3zDaSTx-XWX8ccMuYGD0tBm7cr";
 
-const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+// const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+import chatterabi from "@/lib/chatter";
 const chatterAddress = "0x3fb2668216544c03e98b2be9121ddd4ef469a613";
 
 export default function Stackup() {
@@ -72,7 +73,7 @@ export default function Stackup() {
 
     const { config, error } = usePrepareContractWrite({
         address: chatterAddress,
-        abi: chatterjson.abi,
+        abi: chatterabi,
         functionName: 'sendMessage',
         args: [message]
     })
@@ -84,7 +85,7 @@ export default function Stackup() {
                 if (provider) {
 
                     const data = encodeFunctionData({
-                        abi: chatterjson.abi,
+                        abi: chatterabi,
                         functionName: 'sendMessage',
                         args: [message]
                     })

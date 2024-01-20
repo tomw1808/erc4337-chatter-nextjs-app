@@ -24,7 +24,8 @@ const rpcUrl = "https://sepolia.test.voltaire.candidewallet.com/rpc";
 // const paymasterRpc = `https://api.candide.dev/paymaster/v1/goerli/${paymasterApiKey}`;
 
 
-const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+// const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+import chatterabi from "@/lib/chatter";
 const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
 
 const entrypointAddress = process.env.NEXT_PUBLIC_ENTRYPOINT_ADDRESS as `0x${string}`;
@@ -75,7 +76,7 @@ export default function CandideSafeWallet() {
 
     const { config, error } = usePrepareContractWrite({
         address: chatterAddress,
-        abi: chatterjson.abi,
+        abi: chatterabi,
         functionName: 'sendMessage',
         args: [message]
     })
@@ -98,7 +99,7 @@ export default function CandideSafeWallet() {
                 SetPendingMessage(pendingLog);
                 const smartAccount = new CandideAccount(); //new SafeAccount();
                 const data = encodeFunctionData({
-                    abi: chatterjson.abi,
+                    abi: chatterabi,
                     functionName: 'sendMessage',
                     args: [message]
                 });

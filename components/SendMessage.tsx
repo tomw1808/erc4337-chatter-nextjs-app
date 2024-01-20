@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 
-const chatterjson = require("../../chatter-contracts/out/Chatter.sol/Chatter.json");
+// const chatterjson = require("../../chatter-contracts/out/Chatter.sol/Chatter.json");
+import chatterabi from "@/lib/chatter";
 const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
 
 export default function SendMessage() {
@@ -10,7 +11,7 @@ export default function SendMessage() {
 
     const { config, error } = usePrepareContractWrite({
         address: chatterAddress,
-        abi: chatterjson.abi,
+        abi: chatterabi,
         functionName: 'sendMessage',
         args: [message]
     })

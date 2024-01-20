@@ -7,7 +7,8 @@ import ChatMessage from "./ChatMessage";
 import ScrollableBox from "./ScrollableBox";
 import { Message } from "@/lib/types/Message";
 
-const chatterjson = require("../../chatter-contracts/out/Chatter.sol/Chatter.json");
+// const chatterjson = require("../../chatter-contracts/out/Chatter.sol/Chatter.json");
+import chatterabi from "@/lib/chatter";
 const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
 
 export default function MessageHistory({ address, pendingMessage, pendingIcon, SetPendingMessage }: { address: `0x${string}` | undefined, pendingMessage?: Message, pendingIcon?: string, SetPendingMessage?: Dispatch<SetStateAction<Message | undefined>> }) {
@@ -20,7 +21,7 @@ export default function MessageHistory({ address, pendingMessage, pendingIcon, S
         publicClient.getBlockNumber().then(blocknumber => {
             publicClient.getContractEvents({
                 address: chatterAddress,
-                abi: chatterjson.abi,
+                abi: chatterabi,
                 eventName: "Message",
                 fromBlock: blocknumber - BigInt(5000),
                 toBlock: 'latest'
@@ -32,7 +33,7 @@ export default function MessageHistory({ address, pendingMessage, pendingIcon, S
 
     useContractEvent({
         address: chatterAddress,
-        abi: chatterjson.abi,
+        abi: chatterabi,
         eventName: "Message",
         listener(logs) {
             console.log({logs, pendingMessage, SetPendingMessage})

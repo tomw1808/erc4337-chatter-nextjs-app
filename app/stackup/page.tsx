@@ -14,7 +14,8 @@ const rpcUrl = `https://api.stackup.sh/v1/node/${process.env.NEXT_PUBLIC_STACKUP
 const paymasterUrl = `https://api.stackup.sh/v1/paymaster/${process.env.NEXT_PUBLIC_STACKUP_PAYMASTER}`; // Optional - you can get one at https://app.stackup.sh/
 
 
-const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+// const chatterjson = require("../../../chatter-contracts/out/Chatter.sol/Chatter.json");
+import chatterabi from "@/lib/chatter";
 const chatterAddress = process.env.NEXT_PUBLIC_CHATTER_ADDRESS as `0x${string}`;
 
 export default function Stackup() {
@@ -61,7 +62,7 @@ export default function Stackup() {
 
     const { config, error } = usePrepareContractWrite({
         address: chatterAddress,
-        abi: chatterjson.abi,
+        abi: chatterabi,
         functionName: 'sendMessage',
         args: [message]
     })
@@ -84,7 +85,7 @@ export default function Stackup() {
                     // Encode the calls
                     const callTo = [chatterAddress];
                     const data = encodeFunctionData({
-                        abi: chatterjson.abi,
+                        abi: chatterabi,
                         functionName: 'sendMessage',
                         args: [message]
                     })
